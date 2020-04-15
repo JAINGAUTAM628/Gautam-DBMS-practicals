@@ -1,0 +1,350 @@
+# Gautam-DBMS-practicals
+
+DBMS PRACTICALS   
+GAUTAM JAIN
+BSC STATISTICS (H)
+1212
+Q1.
+mysql> create database du_lib;
+
+mysql> create table LibraryBooks(
+    -> Accession_Number decimal(10,5) primary key,
+    -> Title varchar(30) not null,
+    -> Author varchar(50) not null,
+    -> Department varchar(50) not null,
+    -> Purchase_Date date not null,
+    -> Price decimal(7,2) not null);
+
+mysql> Create table IssuedBooks(
+    -> Accession_Number decimal(10,5) not null,
+    -> Borrower Varchar(30) not null
+    -> foreign key (Accession_Number) references LibraryBooks(Accession_Number));
+
+Q (a)Primary Key- Accession_Number in table LibraryBooks
+        Foreign Key- Accession_Number in table IssuedBooks
+mysql> insert into LibraryBooks values(46235.56,"fundamental of mathematical statistics","sc Gupta","Statistics",'1987-01-12',705.00);
+mysql> insert into LibraryBooks values(87826.46,"database system concepts","navathe","CS",'2000/06/30',520.00);
+mysql>  insert into LibraryBooks values(1345.01,"discrtete maths","sc gupta","mathematics",'2003/07/31',150.00);
+mysql> insert into LibraryBooks values(763647,"Programing in python","sl arora","CS",'2006/07/21',999.00);
+mysql> insert into LibraryBooks values(6780.84,"environmental science","R. Kapoor","evs",'2000/09/04',250.00);
+
+mysql> insert into IssuedBooks values( 1345.01,"kunal");
+mysql> insert into IssuedBooks values( 6780.84,"gautam");
+mysql> insert into IssuedBooks values( 46235.56,"rajesh");
+mysql> insert into IssuedBooks values( 87826.46,"adarsh");
+mysql> insert into IssuedBooks values( 763747,"ranjit");
+
+Q(b) mysql> delete from librarybooks where title="database system concepts";
+
+Q(c) mysql> update librarybooks set department="CS" where title="discrete maths";
+
+Q(d) mysql> select Title from librarybooks where department="CS";
+
+Q(e) mysql> select Title from librarybooks where department="CS" and author="navathe";
+
+Q(f) mysql> select Title from librarybooks l, issuedbooks i where l.accession_number=i.accession_number and l.department="CS";
+
+Q(g) mysql> select Title from librarybooks where price<500 and purchase_date between '1999/01/01' and '2004/01/01';
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q2.
+mysql> create database student;
+
+mysql> create table personal_informartion(
+    -> Croll_no int(10) primary key,
+    -> Name char(30) not null,
+    -> DOB date not null,
+    -> Address varchar(70) not null,
+    -> Marks_in_12th int(2) not null,
+    -> P_number Varchar(10) not null);
+
+mysql> create table Paper_Details(
+    -> Pcode int(4) primary key,
+    -> Pname char(30) unique);
+
+mysql> create table Academic_Details(
+    -> Croll_no int(10) primary key,
+    -> Pcode int(4) not null,
+    -> Attendence int(3) not null,
+    -> Marks int(3) not null,
+    -> foreign key(roll_no) references personal_informartion(roll_no),
+    -> foreign key(paper_code) references Paper_details(paper_code));
+
+Q (a) Primary key - Croll_no in table personal_informartion
+                             Pcode in table Paper_details
+        Foreign key - Croll_no in table Academic_Details
+                            Pcode in table Academic_Details 
+
+mysql> insert into personal_informartion values(1201,"Abhishek",'2000-05-04',"lucknow",90,9109875345);
+mysql> insert into personal_informartion values(1202,"Bharti",'2001-04-19',"kerela",79,9231467893);
+mysql> insert into personal_informartion values(1203,"Chetna",'2001-08-29',"Delhi",92,9098345672);
+mysql> insert into personal_informartion values(1204,"Dharmesh",'2001-10-21',"punjab",89,8876235619);
+mysql> insert into personal_informartion values(1205,"Faizal",'2001-12-19',"Delhi",96,9810558183);
+
+mysql> insert into paper_details value(001,"programming in python");
+mysql> insert into paper_details value(002,"environmental studies");
+mysql> insert into paper_details value(003,"maths");
+mysql> insert into paper_details value(004,"database management sysytem");
+mysql> insert into paper_details value(005,"algebra");
+
+mysql> insert into Academic_details values(1201,002,60,60);
+mysql> insert into Academic_details values(1202,001,40,40);
+mysql> insert into Academic_details values(1204,002,95,81);
+mysql> insert into Academic_details values(1204,003,55,81);
+mysql> insert into Academic_details values(1203,001,85,75);
+
+Q(b)  mysql> select pd.pcode, pd.pname, p.name from paper_details as pd, personal_information as pi where pcode =2 and p.croll_no in(select croll_no from acadmeic_details where pcode = 2 and attendance>75 and marks>60);
+
+Q (c) mysql> select name  from personal_informartion as p, academic_details as a where p.croll_no=a.croll_no and a.marks>60 and a.pcode=001;
+
+Q (d) mysql> select p.name, a.attendence, ad.marks from personal_informartion as p, academic_details as a where p.roll_no=a.roll_no;
+
+Q (e) mysql> select name from personal_informartion as p, academic_details as a where p.croll_no=a.croll_no and pi.croll_no=(select croll_no from academic_details where marks=(select max(marks) from academic_details));
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q3
+mysql> create database twowheeler;
+mysql> create table customer(
+ -> CustId varchar(20) primary key,
+ -> email varchar(30) not null,
+ -> Name char(20) not null,
+ -> phone varchar(10) unique,
+ -> ReferrerID varchar(20));
+mysql> create table BicycleModel(
+ -> ModelNo varchar(10) primary key,
+ -> Manufacturer Char(20) not null,
+ -> Style Varchar(20) not null);
+mysql> create table Bicycle(
+ -> BicycleId varchar(20) primary key,
+ -> DatePurchased date not null,
+ -> Color Char(10) not null,
+ -> CustId varchar(20) not null,
+ -> ModelNo varchar(10) not null,
+ -> foreign key(CustId) references customer(CustId),
+ -> foreign key(ModelNo) references BicycleModel(ModelNo));
+mysql> create table Service(
+ -> StartDate date not null,
+ -> BicycleId varchar(20) not null,
+ -> EndDate date not null,
+ -> Foreign key(BicycleId) references Bicycle(BicycleId));
+Q (a) Primary Key - CustId in table Customer
+ ModelNo in table BicycleModel
+ BicycleId in table Bicycle
+ Foreign Key- CustId in table Bicycle
+ ModelNo in table Bicycle
+ BicycleId in table Service
+mysql> insert into customer values(1,"ronit132@gmail.com","ronit aggarwal",9902583646,C1001");
+mysql> insert into customer values(2,"anuj453@gmail.com","Anuj bansal ",9212718927,"B1002");
+mysql> insert into customer values(3,"manish992@gmail.com","manish singh",9375472814,"C1003");
+mysql> insert into customer values(4,"suraj231@gmail.com","Suraj singh",9213423172,"B1007");
+mysql> insert into customer values(5,"gautam628@gmail.com","Gautam jain",9890221365,C51005");
+mysql> insert into bicyclemodel values(“A198","suzuki","rx7");
+mysql> insert into bicyclemodel values("A187","honda","ts6");
+mysql> insert into bicyclemodel values(“A177","bmw","56ty");
+mysql> insert into bicyclemodel values(“A764","Hero","Bike");
+mysql> insert into bicyclemodel values("A345","suzuki","Sport");
+mysql> insert into bicycle values("S101",'2018-12-05',"Red","2","A198");
+mysql> insert into bicycle values("S102",'2008-05-12',"BLUE","1",A345");
+mysql> insert into bicycle values("S103",'2010-01-13',"grey","4","A764");
+mysql> insert into bicycle values("S104",'2019-09-17',"green","3",”A177");
+mysql> insert into bicycle values("S105",'2010-01-18',brown","2","A187");
+mysql> insert into service values(‘2011-01-09','S105',2011-01-19");
+mysql> insert into service values('2009-05-12','S102',2009-05-20');
+mysql> insert into service values('2011-01-24','S103','2011-02-26');
+mysql> insert into service values('2019-12-05','S101','2019-12-19');
+mysql> insert into service values('2020-01-18','S104','2020-02-20');
+Q (b) mysql> Select * from customer where custID in(Select custid from bicycle where modelno in(select
+Modelno from bicyclemodel where manufacturer="Honda"));
+Q(c) mysql> Select * from bicyclemodel where modelno in(select modelno from bicycle where custid
+in(select custid from customer where referrerId=C1001"));
+Q(d) mysql> select bm.manufacturer from bicycle as bi, bicyclemodel as bm where
+bi.modelno=bm.modelno and bi.color="red";
+Q(e) mysql> select modelno from bicycle where bicycleid in(select distinct bicycleid from service);
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q4
+
+4. mysql> create database employee_detail;
+    mysql> use employee_detail;
+  
+   mysql> create table employee(
+    -> Person_name char(30) primary key,
+    -> Street char(30) not null,
+    -> city char(15) not null);
+
+   mysql> create table Company(
+    -> Company_name varchar(30) Primary key,
+    -> City char(15));
+
+   mysql> create table Works(
+    -> Person_name  char(30),
+    -> Company_name varchar(30),
+    -> Salary decimal(10,2),
+    -> foreign key(Person_name) references employee(Person_name),
+    -> foreign key(Company_name) references Company(Company_name));
+
+   mysql> Create table manages(
+    -> Person_name char(30),
+    -> Manager_name char(30),
+    -> foreign key(Person_name) references employee(Person_name));
+
+mysql> insert into employee values("manish","5/3 C block","FARIDABAD");
+mysql> insert into employee values("Tanishq","34/45 D block","MURADABAD");
+mysql> insert into employee values("chirag","63/66 T block","BHWAANA");
+mysql> insert into employee values("gautam","3/25 F block","DELHI");
+mysql> insert into employee values("shaurya","7/223 E block","Gaziabad");
+mysql> insert into employee values("arsh","56/22 N block","Noida");
+mysql> insert into employee values("honey","39/56 W block","KARKARDUMA");
+mysql> insert into employee values("aryan","23/45 A block","GAZIABAD");
+mysql> insert into employee values("priya","6/4 B block","JANAKPURI");
+mysql> insert into employee values("ranit","9/90 C block","Gaziabad");
+
+mysql> insert into company values("ICICI BANK","FARIDABAD");
+mysql> insert into company values("samba BANK","Gurgaon");
+mysql> insert into company values("HDFC BANK","DELHI");
+mysql> insert into company values("ncb BANK","GURGAON");
+mysql> insert into company values("kotak BANK","LUCKNOW");
+
+mysql> insert into works values("MANISH","hdfc Bank", 20000);
+mysql> insert into works values("HONEY","icici Bank",15000);
+mysql> insert into works values("Ranit","ncb Bank",5000);
+mysql> insert into works values("gautam","samba Bank",8000);
+mysql> insert into works values("shaurya","kotak Bank",10000);
+mysql> insert into works values("arsh","ncb Bank",20000);
+mysql> insert into works values("priya","Kotak Bank",15000);
+mysql> insert into works values("aryan","icici Bank",20000);
+mysql> insert into works values("chirag","hdfc Bank",12000);
+mysql> insert into works values("tanishq","ncb Bank",18000);
+
+mysql> insert into manages values("ranit","manish mallotra");
+mysql> insert into manages values("gautam","raghuvanshi");
+mysql> insert into manages values("chirag","ranjeet singh");
+mysql> insert into manages values("tanishq","Raghuvir Bora");
+mysql> insert into manages values("arsh","raguvanshi");
+
+Q (a) Primary Key- Person_name in table employee
+                            Company_name in table company
+        Foreign Key- Person_name in table works
+                            Company_name in table works
+                            Person_name in table manages
+
+Q (b) mysql> alter table employee add column email varchar(20);
+
+Q (c) mysql> select distinct(manager_name) from manages as m, works as w where m.person_name=w.person_name and (w.company_name="Samba bank" or w.Company_name="NCB Bank");
+
+Q (d) mysql> select e.Person_name, e.Street, e.City, w.salary from employee as e, works as w where e.person_name=w.person_name and w.company_name="Samba Bank" and w.salary>10000;
+
+Q (e) mysql> select e.person_name from employee as e, works as w, company as c where e.person_name=w.person_name and e.city=c.city and w.company_name=c.company_name;
+
+Q (f) mysql> select company_name, max(salary), min(salary), avg(salary) from works group by company_name;
+
+Q (g) mysql> select company_name, sum(salary), count(company_name) as "number of employees" from works group by company_name;
+
+Q (h) mysql> select company_name,max(salary) from works;
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q5
+mysql> create database product;
+mysql> use product;
+
+mysql> create table suppliers(
+    -> Sno int(8) primary key,
+    -> Sname varchar(20) not null,
+    -> Status char(20) not null,
+    -> Scity char(30) not null);
+
+mysql> create table Parts(
+    -> PNo int(8) primary key,
+    -> Pname varchar(20) not null,
+    -> Colour varchar(20) not null,
+    -> Weight int(4) not null,
+    -> City char(20) not null);
+
+mysql> create table Project(
+    -> Jno int(8) Primary key,
+    -> Jname char(20) not null,
+    -> Jcity char(20) not null);
+
+mysql> create table  Shipment(
+    -> Sno varchar(20) not null,
+    -> Pno int(8) not null,
+    -> Jno int(8) not null,
+    -> Quantity int(8) not null,
+    -> foreign key(Sno) references suppliers(Sno),
+    -> foreign key(Pno) references Parts(Pno),
+    -> Foreign key(Jno) references Project(Jno));
+
+mysql> insert into suppliers values(1,"S1",40,"BRISBEN");
+mysql> insert into suppliers values(2,"S2",59,"AUSTRALLIA");
+mysql> insert into suppliers values(3,"S4",92,"PARIS");
+mysql> insert into suppliers values(4,"S2",30,"LAS VEGAS");
+mysql> insert into suppliers values(5,"S3",15,"LONDON");
+
+mysql> insert into parts values( 001,"P1","BLUE",34,"PARIS");
+mysql> insert into parts values( 002,"P2","GREEN",10,"BRISBEN");
+mysql> insert into parts values( 003,"P3","RED",24,"LONDON");
+mysql> insert into parts values( 004,"P2","Green",50,"LONDON");
+mysql> insert into parts values( 005,"P2","Black",30,"AUSTRALLIA");
+
+mysql> insert into project values(201,"J1","BRISBEN");
+mysql> insert into project values(202,"J2","AUSTRALLIA");
+mysql> insert into project values(203,"J3","PARIS");
+mysql> insert into project values(204,"J4","LONDON");
+mysql> insert into project values(205,"J4","PARIS");
+
+mysql> insert into shipment values(1,004,202,300);
+mysql> insert into shipment values(3,005,203,230);
+mysql> insert into shipment values(5,002,203,540);
+mysql> insert into shipment values(1,003,201,240);
+mysql> insert into shipment values(2,001,205,890);
+mysql> insert into shipment values(1,001,202,480);
+
+Q (a) Primary Key- Sno in table Suppliers
+                            Pno in table Parts
+                            Jno in table Project
+
+        Foreign Key- Sno in table Shipment
+                            Pno in table Shipment
+                            Jno in table Shipment
+
+Q (b) mysql> select Sno from suppliers where scity="Paris" and Status>20;
+
+Q (c) mysql> Select * from suppliers where Sno in(select Sno from shipment where Pno in(select Pno from parts where Pname="P2")) Order by sno;
+
+Q (d) mysql> Select Sname from suppliers where Sno in(Select distinct sno from shipment where Pno in(select Pno from parts where Pname!="P2"));
+
+Q (e) mysql> select s.Sno, s.Pno, s.Jno, s.Quantity, s.quantity*p.weight as "Total_shipment_weight" from shipment as s, parts as p where s.pno=p.pno;
+
+Q (f) mysql> Select * from shipment where quantity between 300 and 750;
+
+Q (g) mysql> select Pno from parts where weight>16 or pno in(select pno from shipment where sno in(select s.sno from shipment as s, suppliers as su where s.sno=su.sno and su.sname="S2"));
+
+Q (h) mysql> select city from parts where colour="Red" and Pno in(select pno from shipment where quantity>5);
+
+Q (i) mysql> select * from parts where pno in(select Pno from shipment where sno in(select sno from suppliers where Scity="London"));
+
+Q (j) mysql> select Pno from shipment where sno in(select sno from suppliers where scity="London") and Jno in(Select jno from project where Jcity="London");
+
+Q (k) mysql> select count(distinct(Jno)) as "No. of Project Supplied by supplier S1" from shipment where sno in(select sno from suppliers where Sname="S1");
+
+Q (l) mysql> select count(*) from parts where Pno in(Select Pno from shipment where sno in(select Sno from suppliers where sname ="S1")) and Pname="P1";
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
